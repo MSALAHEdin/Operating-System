@@ -1,1 +1,126 @@
+// CPU-Scheduling-Algorithm-In-C
+// Non Pre-emptive Priority Scheduling Algorithm with Arrival Time
 
+#include<stdio.h>
+#include<malloc.h>
+void main()
+{
+    int n, i, j, pos, temp, * bt, * wt, * tat, * p, * pt, * arrivalTime, * priorityArray;
+    float avgwt = 0, avgtat = 0, totalTime = 0;
+    printf("\n Plz enter the number of processes : ");
+    scanf("%d", &n);
+
+    p = (int*)malloc(n * sizeof(int));     // process
+    bt = (int*)malloc(n * sizeof(int));    // Burst time
+    pt = (int*)malloc(n * sizeof(int));    // Priority time
+    wt = (int*)malloc(n * sizeof(int));    // Waiting time
+    tat = (int*)malloc(n * sizeof(int));   // Turnaround time
+    arrivalTime = (int*)malloc(n * sizeof(int)); //Arrival time
+    priorityArray = (int*)malloc(n * sizeof(int));
+
+    printf("\n Plz enter the burst time and priority for each process ");
+    for (i = 1; i <= n; i++)
+    {
+        printf("\n     Burst time of P%d : ", i);
+        scanf("%d", &bt[i]);
+        printf("       Priority of P%d : ", i);
+        scanf("%d", &pt[i]);
+        printf("       Arrival Time of P%d : ", i);
+        scanf("%d", &arrivalTime[i]);
+        p[i] = i;
+    }
+
+    for (i = 0; i < n; i++)
+    {
+        pos = i;
+        for (j = i + 1; j < n; j++)
+        {
+
+            if (arrivalTime[j] < arrivalTime[pos])
+            {
+                pos = j;
+            }
+        }
+
+        // priorityTime
+        temp = pt[i];
+        pt[i] = pt[pos];
+        pt[pos] = temp;
+
+        // burstTime
+        temp = bt[i];
+        bt[i] = bt[pos];
+        bt[pos] = temp;
+
+        // process
+        temp = p[i];
+        p[i] = p[pos];
+        p[pos] = temp;
+
+        // arrivalTime
+        temp = arrivalTime[i];
+        arrivalTime[i] = arrivalTime[pos];
+        arrivalTime[pos] = temp;
+    }
+
+    wt[0] = 0;
+    tat[0] = bt[0];
+    totalTime = bt[0];
+
+    avgwt += wt[0];
+    avgtat += tat[0];
+    j = 0;
+    int stop = 1;
+    for (i = 1; i < n; i++)
+    {
+
+        stop = i;
+        j = 0;
+
+        // array of arrival index
+        for (; stop < n; stop++)
+        {
+            if (arrivalTime[stop] <= totalTime) {
+                priorityArray[j] = stop;
+                j++;
+            }
+        }
+        i += j - 1;
+        int cou = 0, cou2 = 0;
+        for (; cou < j; cou++)
+        {
+            pos = cou;
+            for (cou2 = cou + 1; cou2 < j; cou2++)
+            {
+
+                if (pt[priorityArray[cou2]] < pt[priorityArray[pos]])
+                {
+                    pos = cou2;
+                }
+            }
+
+            // priorityTime
+            temp = priorityArray[cou];
+            priorityArray[cou] = priorityArray[pos];
+            priorityArray[pos] = temp;
+        }
+
+        for (cou = 0; cou < j; cou++)
+        {
+            wt[priorityArray[cou]] = totalTime - arrivalTime[priorityArray[cou]];
+            totalTime += bt[priorityArray[cou]];
+            tat[priorityArray[cou]] = wt[priorityArray[cou]] + bt[priorityArray[cou]];
+            avgwt += wt[priorityArray[cou]];
+            avgtat += tat[priorityArray[cou]];
+        }
+   
+    }
+
+    avgwt = avgwt / n;
+    avgtat = avgtat / n;
+
+    printf("\n The Average Waiting Time = %f \n", avgwt);
+    printf("\n The Average Turnaround Time = %f \n", avgtat);
+    printf("\n              END OF PROGRAM               ");
+
+}

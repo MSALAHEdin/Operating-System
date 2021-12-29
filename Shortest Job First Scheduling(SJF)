@@ -21,9 +21,9 @@ void main()
     printf("\n Plz enter burst time for each process \n");
     for (i = 1; i <= n; i++)
     {
-        printf("Enter Burst time for P%d : ", i);
+        printf("     Enter Burst time for P%d : ", i);
         scanf("%d", &bt[i]);
-        printf("Enter Arrival time for P%d : ", i);
+        printf("     Enter Arrival time for P%d : ", i);
         scanf("%d", &arrivalTime[i]);
         p[i] = i;
     }
